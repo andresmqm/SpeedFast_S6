@@ -1,0 +1,6 @@
+﻿ .idea/ 
+ target/ 
+ *.zip 
+ *.dll 
+ *.exe 
+ Modelamiento_Bases_Datos/ 
