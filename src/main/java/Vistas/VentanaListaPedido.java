@@ -1,6 +1,9 @@
 package Vistas;
 
+import Controlador.PedidoDAO;
+import Modelo.EstadoPedido;
 import Modelo.Pedidos;
+import Modelo.TipoPedido;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,6 +15,7 @@ public class VentanaListaPedido extends JFrame {
     private ArrayList<Pedidos> listaPedidos;
     private JTable tablaPedidos;
     private DefaultTableModel modeloTabla;
+    private JComboBox<EstadoPedido> filtroEstado;
 
     public VentanaListaPedido(ArrayList<Pedidos> listaPedidos) {
         this.listaPedidos = listaPedidos;
@@ -29,24 +33,127 @@ public class VentanaListaPedido extends JFrame {
         JScrollPane scrollPane = new JScrollPane(tablaPedidos);
         add(scrollPane, BorderLayout.CENTER);
 
+        JPanel panelSuperior = new JPanel();
+
         JButton botonRefrescar = new JButton("Refrescar");
-        add(botonRefrescar, BorderLayout.SOUTH);
+        JButton botonEliminar = new JButton("Eliminar");
+        JButton botonEditar = new JButton("Editar");
+
+        filtroEstado = new JComboBox<>(EstadoPedido.values());
+
+        panelSuperior.add(botonRefrescar);
+        panelSuperior.add(botonEliminar);
+        panelSuperior.add(botonEditar);
+        panelSuperior.add(new JLabel("Filtrar:"));
+        panelSuperior.add(filtroEstado);
+
+        add(panelSuperior, BorderLayout.NORTH);
 
         cargarDatos();
 
         botonRefrescar.addActionListener(e -> cargarDatos());
-
+        botonEliminar.addActionListener(e -> eliminarPedido());
+        botonEditar.addActionListener(e -> editarPedido());
+        filtroEstado.addActionListener(e -> cargarDatos());
     }
 
     private void cargarDatos() {
 
         modeloTabla.setRowCount(0);
+
+        PedidoDAO dao = new PedidoDAO();
+        listaPedidos = dao.listarTodos();
+
+        EstadoPedido filtro = (EstadoPedido) filtroEstado.getSelectedItem();
+
         for (Pedidos pedidos : listaPedidos) {
-            Object[] fila = {pedidos.getId(), pedidos.getDireccion(), pedidos.getTipo(), pedidos.getEstado()};
-            modeloTabla.addRow(fila);
 
+            if (pedidos.getEstado() == filtro) {
 
+                Object[] fila = {
+                        pedidos.getId(),
+                        pedidos.getDireccion(),
+                        pedidos.getTipo(),
+                        pedidos.getEstado()
+                };
+
+                modeloTabla.addRow(fila);
+            }
         }
+    }
+
+    private void eliminarPedido() {
+
+        int filaSeleccionada = tablaPedidos.getSelectedRow();
+
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar un pedido",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int id = (int) modeloTabla.getValueAt(filaSeleccionada, 0);
+        EstadoPedido estado = EstadoPedido.valueOf(
+                modeloTabla.getValueAt(filaSeleccionada, 3).toString());
+
+        if (estado == EstadoPedido.EN_REPARTO) {
+            JOptionPane.showMessageDialog(this,
+                    "No se puede eliminar un pedido en reparto",
+                    "Validacion",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirmacion = JOptionPane.showConfirmDialog(this,
+                "¿Esta seguro que desea eliminar?",
+                "Confirmar",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirmacion == JOptionPane.YES_OPTION) {
+
+            PedidoDAO dao = new PedidoDAO();
+            dao.eliminar(id);
+
+            cargarDatos();
+        }
+    }
+
+    private void editarPedido() {
+
+        int fila = tablaPedidos.getSelectedRow();
+
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Seleccione un pedido",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int id = (int) modeloTabla.getValueAt(fila, 0);
+        String direccion = (String) modeloTabla.getValueAt(fila, 1);
+        TipoPedido tipo = TipoPedido.valueOf(
+                modeloTabla.getValueAt(fila, 2).toString());
+        EstadoPedido estado = EstadoPedido.valueOf(
+                modeloTabla.getValueAt(fila, 3).toString());
+
+        String nuevaDireccion = JOptionPane.showInputDialog(this,
+                "Nueva direccion:",
+                direccion);
+
+        if (nuevaDireccion == null || nuevaDireccion.trim().length() < 5) {
+            return;
+        }
+
+        Pedidos pedidoActualizado =
+                new Pedidos(id, nuevaDireccion, tipo, estado);
+
+        PedidoDAO dao = new PedidoDAO();
+        dao.actualizar(pedidoActualizado);
+
+        cargarDatos();
     }
 
     {
@@ -68,4 +175,3 @@ public class VentanaListaPedido extends JFrame {
         panel1.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
     }
 }
-

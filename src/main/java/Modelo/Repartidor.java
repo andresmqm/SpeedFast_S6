@@ -12,5 +12,11 @@ public class Repartidor {
 
     public String getNombre() { return nombre; }
     public int getId() { return id; }
+
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }
 

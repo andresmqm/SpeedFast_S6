@@ -2,33 +2,40 @@ package Modelo;
 
 public class Pedidos {
 
-    private  String id;
+    private  int id;
     private  String direccion;
-    private  String tipo;
-    private String estado;
+    private  TipoPedido tipo;
+    private EstadoPedido estado;
 
-    public Pedidos(String id, String direccion, String tipo, String estado) {
+    public Pedidos(String direccion, TipoPedido tipo, EstadoPedido estado) {
+        this.direccion = direccion;
+        this.tipo = tipo;
+        this.estado = estado;
+    }
+
+    public Pedidos(int id, String direccion, TipoPedido tipo, EstadoPedido estado) {
         this.id = id;
         this.direccion = direccion;
         this.tipo = tipo;
         this.estado = estado;
     }
 
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
+
+    public EstadoPedido getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPedido estado) {
+        this.estado = estado;
+    }
+
 
     public String getDireccion() {
         return direccion;
@@ -38,22 +45,17 @@ public class Pedidos {
         this.direccion = direccion;
     }
 
-    public String getTipo() {
+    public TipoPedido getTipo() {
         return tipo;
     }
 
-    public void setTipo(String tipo) {
+    public void setTipo(TipoPedido tipo) {
         this.tipo = tipo;
     }
 
     @Override
     public String toString() {
-        return "Pedidos{" +
-                "id='" + id + '\'' +
-                ", direccion='" + direccion + '\'' +
-                ", tipo='" + tipo + '\'' +
-                ", estado='" + estado + '\'' +
-                '}';
+        return id + " - " + direccion + " (" + estado + ")";
     }
 
     public Object [] toArray(){

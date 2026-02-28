@@ -16,7 +16,8 @@ public class EntregaDAO {
         try (Connection c = con.obtenerConexion();
              PreparedStatement ps = c.prepareStatement(query)) {
 
-            // Extraemos los datos del objeto
+            // EXTRAEMOS DATOS DEL OBJETO
+
             ps.setInt(1, entrega.getIdPedido());
             ps.setInt(2, entrega.getIdRepartidor());
 

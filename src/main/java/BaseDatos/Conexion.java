@@ -13,7 +13,7 @@ public class Conexion {
         Connection conexion = null;
 
         try {
-            Class.forName ("com.mysql.jdbc.Driver");
+            Class.forName ("com.mysql.cj.jdbc.Driver");
             conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/speedFast_bd", "root", "");
             System.out.println("conexion exitosa");
 

@@ -38,7 +38,8 @@ public class VentanaPrincipal extends JFrame {
         });
 
         btnAsignar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Modulo proximamaente");
+            VentanaAsignarEntrega ventanaAsignar = new VentanaAsignarEntrega();
+            ventanaAsignar.setVisible(true);
         });
 
 

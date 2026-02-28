@@ -1,7 +1,9 @@
 package Vistas;
 
 import Controlador.PedidoDAO;
+import Modelo.EstadoPedido;
 import Modelo.Pedidos;
+import Modelo.TipoPedido;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +17,8 @@ public class VentanaRegistroPedido extends JFrame {
     private ArrayList<Pedidos> listaPedidos;
     private JTextField columId;
     private JTextField columDirecion;
-    private JComboBox<String> comboBoxTipo;
-    private JComboBox<String> comboBoxEstado;
+    private JComboBox<TipoPedido> comboBoxTipo;
+    private JComboBox<EstadoPedido> comboBoxEstado;
 
 
     public VentanaRegistroPedido(ArrayList<Pedidos> listaPedido) {
@@ -26,22 +28,19 @@ public class VentanaRegistroPedido extends JFrame {
         setSize(500, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(3, 1, 5, 5));
+        setLayout(new GridLayout(4, 2, 5, 5));
 
-        add(new JLabel("ID Pedido:"));
-        columId = new JTextField();
-        add(columId);
 
         add(new JLabel("Direccion"));
         columDirecion = new JTextField();
         add(columDirecion);
 
         add(new JLabel("Tipo"));
-        comboBoxTipo = new JComboBox<>(new String[]{"Comida", "Encomienda", "Express"});
+        comboBoxTipo = new JComboBox<>(TipoPedido.values());
         add(comboBoxTipo);
 
         add(new JLabel("Estado"));
-        comboBoxEstado = new JComboBox<>(new String[]{"PREPARANDO", "RECOGIDO", "ENTREGADO"});
+        comboBoxEstado = new JComboBox<>(EstadoPedido.values());
         add(comboBoxEstado);
 
 
@@ -53,18 +52,17 @@ public class VentanaRegistroPedido extends JFrame {
     }
 
     private void guardarPedidos() {
-        String id = columId.getText().trim();
-        String direccion = columDirecion.getText().trim();
-        String tipo = (String) comboBoxTipo.getSelectedItem();
-        String estado = (String) comboBoxEstado.getSelectedItem();
 
-        if (id.isEmpty() || direccion.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Todos los campos soin obligatorios", "Error", JOptionPane.ERROR_MESSAGE);
+        String direccion = columDirecion.getText().trim();
+        TipoPedido tipo = (TipoPedido) comboBoxTipo.getSelectedItem();
+        EstadoPedido estado = (EstadoPedido) comboBoxEstado.getSelectedItem();
+
+        if (direccion.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Pedidos pedido = new Pedidos(id, direccion, tipo, estado);
-        listaPedidos.add(pedido);
+        Pedidos pedido = new Pedidos(direccion, tipo, estado);
 
         PedidoDAO dao = new PedidoDAO();
         dao.guardar(pedido);
@@ -72,7 +70,6 @@ public class VentanaRegistroPedido extends JFrame {
         JOptionPane.showMessageDialog(this, "Pedido registrado exitosamente", "Registro", JOptionPane.INFORMATION_MESSAGE);
 
 
-        columId.setText("");
         columDirecion.setText("");
 
     }
